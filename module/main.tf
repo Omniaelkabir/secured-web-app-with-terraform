@@ -125,7 +125,7 @@ resource "aws_security_group" "secgroup" {
   description = "Allow HTTP traffic from anywhere"
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "My-secgroup"
+    Name = "secgroup"
   }
 
   ingress {

@@ -10,3 +10,15 @@ public_ip2 3.84.207.210
 public_ip1 54.226.10.133
 public_ip1 18.234.171.66
 public_ip2 34.228.217.17
+public_ip1 3.85.111.238
+public_ip2 100.24.66.77
+public_ip1 18.208.220.1
+public_ip2 54.209.36.251
+public_ip1 107.21.22.16
+public_ip2 18.209.161.179
+public_ip2 54.161.44.88
+public_ip1 3.89.96.238
+public_ip2 54.205.249.27
+public_ip1 54.226.35.128
+public_ip1 54.226.85.171
+public_ip2 3.87.118.70

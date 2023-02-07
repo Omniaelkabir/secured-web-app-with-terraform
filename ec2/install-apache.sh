@@ -1,6 +1,6 @@
 #! /bin/bash
-sudo apt-get update
-sudo apt-get install -y apache2
-sudo systemctl start apache2
-sudo systemctl enable apache2
-echo "<h1>secured-web-app-with-terraform$(hostname -f)</h1>" | sudo tee /var/www/html/index.html
+sudo apt update -y
+sudo apt install nginx -y
+sudo echo "Hello from terraform $HOSTNAME " > /var/www/html/index.html
+sudo systemctl enable nginx
+sudo systemctl start nginx
