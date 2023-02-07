@@ -1,0 +1,12 @@
+public_ip2 3.80.176.248
+public_ip1 54.197.202.8
+public_ip1 54.163.206.196
+public_ip2 54.204.248.39
+public_ip2 54.161.128.27
+public_ip1 3.81.230.142
+public_ip1 52.201.236.208
+public_ip2 3.81.215.101
+public_ip2 3.84.207.210
+public_ip1 54.226.10.133
+public_ip1 18.234.171.66
+public_ip2 34.228.217.17
