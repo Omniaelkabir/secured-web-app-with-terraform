@@ -1,13 +1,5 @@
-# provider "aws" {
-#   region = var.region
-# }
+# Create vpc
 
-
-
-# variable "region" {
-#   type = string
-# }
-# create vpc
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
@@ -16,7 +8,8 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# create subnets two public and two private
+# Create subnets two public and two private
+
 resource "aws_subnet" "public1" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = var.subnets_cidr[0]
@@ -97,7 +90,8 @@ resource "aws_route_table" "private-route" {
   
 }
 
-# Create nat gateway and elastic ip
+# Create nat gateway and Elastic IP
+
 resource "aws_eip" "eip" {
     vpc = true
 }
@@ -124,4 +118,114 @@ resource "aws_route_table_association" "first-private" {
 resource "aws_route_table_association" "second-private" {
   subnet_id      = aws_subnet.private2.id
   route_table_id = aws_route_table.private-route.id
+}
+
+# Create security groups
+resource "aws_security_group" "secgroup" {
+  description = "Allow HTTP traffic from anywhere"
+  vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "My-secgroup"
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.cidr_from_anywhere]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.cidr_from_anywhere]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.cidr_from_anywhere]
+  }
+}
+# Create Public Loadbalancer
+resource "aws_lb" "public-lb" {
+  name               = "pub-lb"
+  internal           = false
+  load_balancer_type = "application"
+   ip_address_type = "ipv4"
+  security_groups    = [aws_security_group.secgroup.id]
+  subnets            = [aws_subnet.public1.id, aws_subnet.public2.id]
+  tags = {
+    Name = "My-public-lb"
+  }
+}
+resource "aws_lb_target_group" "publicgroup" {
+  name     = "pub-targetGroup"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.vpc.id
+  tags = {
+    Name = "My-public-targetgroup"
+  }
+}
+resource "aws_lb_target_group_attachment" "attach-proxy1" {
+  target_group_arn = aws_lb_target_group.publicgroup.arn
+  target_id        = var.publicvmid1
+  port             = 80
+}
+resource "aws_lb_target_group_attachment" "attach-proxy2" {
+  target_group_arn = aws_lb_target_group.publicgroup.arn
+  target_id        = var.publicvmid2
+  port             = 80
+}
+resource "aws_lb_listener" "listener" {
+  load_balancer_arn = aws_lb.public-lb.arn
+  protocol          = "HTTP"
+  port              = 80
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.publicgroup.arn
+  }
+}
+# Create Private Loadbalancer
+resource "aws_lb" "private-lb" {
+  name               = "priv-lb"
+  internal           = true
+  ip_address_type = "ipv4"
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.secgroup.id]
+  subnets            = [aws_subnet.private1.id, aws_subnet.private2.id]
+  tags = {
+    Name = "My-private-lb"
+  }
+}
+resource "aws_lb_target_group" "privategroup" {
+  name     = "priv-targetGroup"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.vpc.id
+  tags = {
+    Name = "My-private-targetgroup"
+  }
+}
+resource "aws_lb_target_group_attachment" "attach-priv1" {
+  target_group_arn = aws_lb_target_group.privategroup.arn
+  target_id        = var.privatevmid1
+  port             = 80
+}
+resource "aws_lb_target_group_attachment" "attach-priv2" {
+  target_group_arn = aws_lb_target_group.privategroup.arn
+  target_id        = var.privatevmid2
+  port             = 80
+}
+resource "aws_lb_listener" "listener1" {
+  load_balancer_arn = aws_lb.private-lb.arn
+  protocol          = "HTTP"
+  port              = 80
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.privategroup.arn
+  }
 }
