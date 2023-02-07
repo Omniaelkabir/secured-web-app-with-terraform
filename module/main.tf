@@ -32,7 +32,7 @@ resource "aws_subnet" "public2" {
 
 resource "aws_subnet" "private1" {
   vpc_id     = aws_vpc.vpc.id
-  cidr_block = var.subnet_cidr[2]
+  cidr_block = var.subnets_cidr[2]
   availability_zone = var.az1
   map_public_ip_on_launch = false
   tags = {
@@ -42,8 +42,8 @@ resource "aws_subnet" "private1" {
 
 resource "aws_subnet" "private2" {
   vpc_id     = aws_vpc.vpc.id
-  cidr_block = var.subnet_cidr[3]
-  availability_zone = var.az1
+  cidr_block = var.subnets_cidr[3]
+  availability_zone = var.az2
   map_public_ip_on_launch = false
   tags = {
     Name = "Private-Subnet2"
@@ -90,7 +90,7 @@ resource "aws_route_table" "private-route" {
   
 }
 
-# Create nat gateway and Elastic IP
+# Create nat gateway and elastic ip
 
 resource "aws_eip" "eip" {
     vpc = true
