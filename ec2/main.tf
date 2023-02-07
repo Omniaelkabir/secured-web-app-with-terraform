@@ -59,7 +59,7 @@ resource "aws_instance" "private-ec1" {
     Name = "private-ec1"
   }
   
-  user_data = file("ec2/install-apache.sh")
+  user_data = file("ec2/install-nginx.sh")
 
 }
 
@@ -73,5 +73,5 @@ resource "aws_instance" "private-ec2" {
     Name = "private-ec2"
   }
   
-  user_data = file("ec2/install-apache.sh")
+  user_data = file("ec2/install-nginx.sh")
 }
